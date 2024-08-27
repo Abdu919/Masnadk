@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="ar">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>تاريخ المملكة</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <div class="container">
+        <h1>مساعد تاريخ المملكة</h1>
+        <div class="chatbox">
+            <div id="chat-log" class="chat-log">
+                <div class="bot-message">..مرحبا! يمكنني الاجابة عن اسئلة مقرر تاريخ المملكة ، انسخ والصق سؤالك في المحادثة </div>
+            </div>
+            <div class="chat-input">
+                <input type="text" id="user-input" placeholder="اكتب، ألصق سؤالك هنا ..">
+                <button id="send-button">Send</button>
+            </div>
+        </div>
+        <a href="index.html" class="back-link">← Back to Main Page</a>
+    </div>
+
+    <script>
+        const API_URL = 'http://your-ec2-instance-public-ip:8000';
+        const sendButton = document.getElementById('send-button');
+        const userInput = document.getElementById('user-input');
+        const chatLog = document.getElementById('chat-log');
+
+        sendButton.addEventListener('click', sendMessage);
+        userInput.addEventListener('keypress', function(e) {
+            if (e.key === 'Enter') {
+                sendMessage();
+            }
+        });
+
+        function sendMessage() {
+            const message = userInput.value.trim();
+            if (message === '') return;
+
+            // Display user message
+            const userMessageDiv = document.createElement('div');
+            userMessageDiv.classList.add('user-message');
+            userMessageDiv.textContent = message;
+            chatLog.appendChild(userMessageDiv);
+
+            // Clear input
+            userInput.value = '';
+
+            // Send message to server
+            fetch(`${API_URL}/get_answer1`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({
+                    product: 'product2',
+                    message: message
+                })
+            })
+            .then(response => response.json())
+            .then(data => {
+                const botMessageDiv = document.createElement('div');
+                botMessageDiv.classList.add('bot-message');
+                botMessageDiv.textContent = data.answer;
+                chatLog.appendChild(botMessageDiv);
+
+                // Scroll to bottom
+                chatLog.scrollTop = chatLog.scrollHeight;
+            });
+        }
+    </script>
+</body>
+<footer>
+    <div class="footer-content">
+        <ul class="social-links">
+            <li><a href="https://facebook.com">Facebook</a></li>
+            <li><a href="https://instagram.com">Instagram</a></li>
+        </ul>
+        <p>&copy; 2024 Made with 💓 by Seniors.</p>
+    </div>
+</footer>
+</html>

@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="ar">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>تاريخ المملكة - OTP مصادقة</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <div class="container">
+        <h1>ادخل OTP (كلمة مرور لمرة واحدة)</h1>
+        <form id="otp-form">
+            <input type="text" id="otp-input" placeholder="ادخل OTP هنا" required>
+            <button type="submit">ارسل</button>
+        </form>
+        <p id="error-message" style="color:red;"></p>
+        <a href="index.html" class="back-link">← العودة الى الصفحة الرئيسية</a>
+    </div>
+
+    <script>
+        const API_URL = 'http://your-ec2-instance-public-ip:8000';
+
+        document.getElementById('otp-form').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const otp = document.getElementById('otp-input').value;
+
+            try {
+                const response = await fetch(`${API_URL}/product1`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/x-www-form-urlencoded',
+                    },
+                    body: `otp=${otp}`,
+                });
+
+                if (response.ok) {
+                    window.location.href = 'product1_chat.html';
+                } else {
+                    const data = await response.json();
+                    document.getElementById('error-message').textContent = data.error || 'Invalid or used OTP.';
+                }
+            } catch (error) {
+                console.error('Error:', error);
+                document.getElementById('error-message').textContent = 'An error occurred. Please try again.';
+            }
+        });
+    </script>
+</body>
+</html>
