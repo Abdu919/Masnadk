@@ -1,4 +1,4 @@
-fetch('static/ngrok_url.txt') 
+fetch('pass/ngrok_url.txt') 
     .then(response => response.text())
     .then(ngrokUrl => {
         const sendButton = document.getElementById('send-button');
