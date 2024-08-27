@@ -6,7 +6,7 @@ links.forEach(link => {
         event.preventDefault(); 
         const url = link.getAttribute('href'); 
 
-        fetch(url)
+        fetch('static/ngrok_url.txt')
             .then(response => response.text())
             .then(html => {
                 mainContainer.innerHTML = html; 
