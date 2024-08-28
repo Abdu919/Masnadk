@@ -10,7 +10,7 @@
     <div class="container">
         <h1>مرحبا بك في المساعد الذكي للخدمات الطلابية </h1>
         <div class="products">
-            <a href="product1.html" class="product-card">
+            <a href="javascript:void(0)" id="product1-link" class="product-card">
                 <h2>تاريخ المملكة</h2>
                 <p>ادخل للمساعد الخاص ب تاريخ المملكة </p>
             </a>
@@ -24,6 +24,26 @@
             </a>
         </div>
     </div>
+
+    <script>
+        document.getElementById('product1-link').addEventListener('click', async () => {
+            try {
+                const response = await fetch('http://ec2-3-28-40-0.me-central-1.compute.amazonaws.com:8000/gen_otp', {
+                    method: 'POST'
+                });
+                const data = await response.json();
+                if (response.ok) {
+                    const otp = data.otp;
+                    // Redirect to product1.html and pass the OTP as a query parameter
+                    window.location.href = `product1.html?otp=${otp}`;
+                } else {
+                    console.error('Failed to generate OTP');
+                }
+            } catch (error) {
+                console.error('Error:', error);
+            }
+        });
+    </script>
 </body>
 <footer>
     <div class="footer-content">
