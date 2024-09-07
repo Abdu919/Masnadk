@@ -1,0 +1,287 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI Chatbox</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f2f2f2;
+            margin: 0;
+            padding: 0;
+        }
+
+        .container {
+            width: 90%;
+            max-width: 800px;
+            margin: 50px auto;
+            text-align: center;
+        }
+
+        h1 {
+            margin-bottom: 40px;
+            color: #333;
+        }
+
+        .scrolling-text {
+            font-size: 18px;
+            font-weight: bold;
+            margin: 20px 0;
+            position: relative;
+            overflow: hidden;
+            height: 40px; /* Adjust height for scrolling effect */
+        }
+
+        .text-wrapper {
+            display: flex;
+            transition: transform 1s ease-in-out;
+            position: absolute;
+            width: 300%; /* 100% for each message */
+        }
+
+        .text-item {
+            width: 33.33%; /* One third of the wrapper */
+            text-align: center;
+        }
+
+        .chatbox {
+            background-color: #fff;
+            border-radius: 8px;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+            padding: 20px;
+            max-width: 600px;
+            margin: 0 auto 20px;
+            text-align: left;
+        }
+
+        .chat-log {
+            height: 300px;
+            overflow-y: auto;
+            margin-bottom: 20px;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            background-color: #fafafa;
+        }
+
+        .user-message, .bot-message {
+            margin: 10px 0;
+            padding: 10px 15px;
+            border-radius: 20px;
+            max-width: 70%;
+        }
+
+        .user-message {
+            background-color: #d1e7dd;
+            align-self: flex-end;
+            text-align: right;
+            margin-left: auto;
+        }
+
+        .bot-message {
+            background-color: #f8d7da;
+            align-self: flex-start;
+            text-align: left;
+            margin-right: auto;
+        }
+
+        .chat-input {
+            display: flex;
+            justify-content: space-between;
+        }
+
+        textarea {
+            width: 80%;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            resize: none; /* Prevent resizing */
+        }
+
+        #send-button {
+            width: 18%;
+            padding: 10px;
+            background-color: #0d6efd;
+            color: #fff;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+
+        #send-button:hover {
+            background-color: #0b5ed7;
+        }
+
+        .loading {
+            text-align: center;
+            color: #6c757d;
+            font-style: italic;
+            animation: fadeInOut 1.5s infinite;
+        }
+
+        @keyframes fadeInOut {
+            0%, 100% { opacity: 0; }
+            50% { opacity: 1; }
+        }
+
+        footer {
+            background-color: #333;
+            color: white;
+            text-align: center;
+            padding: 20px 0;
+        }
+
+        .footer-content {
+            max-width: 1200px;
+            margin: auto;
+        }
+
+        .social-links {
+            list-style: none;
+            padding: 0;
+        }
+
+        .social-links li {
+            display: inline;
+            margin: 0 10px;
+        }
+
+        .social-links a {
+            color: white;
+            text-decoration: none;
+        }
+
+        .social-links a:hover {
+            text-decoration: underline;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>مهارات حاسب الطايف</h1>
+        <div class="scrolling-text">
+            <div class="text-wrapper">
+                <div class="text-item">هذة الجلسة تسمح لك بأرسال ١٠ اسئلة فقط</div>
+                <div class="text-item">لضمان الاجابة تأكد من أرسال السؤال مع الخيارات</div>
+                <div class="text-item">هذه الخدمة مجانية لفترة محدودة</div>
+            </div>
+        </div>
+        <div class="chatbox">
+            <div id="chat-log" class="chat-log">
+                <div class="bot-message">Hello! How can I assist you today?</div>
+            </div>
+            <div class="chat-input">
+                <textarea id="user-input" rows="3" placeholder="Type your message here..."></textarea>
+                <button id="send-button">Send</button>
+            </div>
+        </div>
+    </div>
+
+    <footer>
+        <div class="footer-content">
+            <ul class="social-links">
+                <li><a href="https://facebook.com">Facebook</a></li>
+                <li><a href="https://instagram.com">Instagram</a></li>
+            </ul>
+            <p>&copy; 2024 Made with 💓 by Seniors.</p>
+        </div>
+    </footer>
+
+    <script>
+    const sendButton = document.getElementById('send-button');
+    const userInput = document.getElementById('user-input');
+    const chatLog = document.getElementById('chat-log');
+    const textWrapper = document.querySelector('.text-wrapper');
+    const texts = document.querySelectorAll('.text-item');
+    let currentIndex = 0;
+
+    function showNextText() {
+        currentIndex = (currentIndex + 1) % texts.length;
+        const offset = -currentIndex * (100 / texts.length);
+        textWrapper.style.transform = `translateX(${offset}%)`;
+    }
+
+    setInterval(showNextText, 10000); // Change text every 10 seconds
+
+    sendButton.addEventListener('click', sendMessage);
+
+    function addLoadingMessage() {
+        const loadingDiv = document.createElement('div');
+        loadingDiv.classList.add('bot-message', 'loading');
+        loadingDiv.textContent = 'AI is thinking...';
+        chatLog.appendChild(loadingDiv);
+        chatLog.scrollTop = chatLog.scrollHeight;
+        return loadingDiv;
+    }
+
+    function addMessage(result) {
+        const botMessageDiv = document.createElement('div');
+        botMessageDiv.classList.add('bot-message');
+        botMessageDiv.textContent = result;
+        chatLog.appendChild(botMessageDiv);
+        chatLog.scrollTop = chatLog.scrollHeight;
+        return botMessageDiv;
+    }
+
+    async function sendMessage() {
+        const message = userInput.value.trim();
+        if (message === '') return;
+
+        const userMessageDiv = document.createElement('div');
+        userMessageDiv.classList.add('user-message');
+        userMessageDiv.textContent = message;
+        chatLog.appendChild(userMessageDiv);
+
+        userInput.value = '';
+
+        const loadingMessage = addLoadingMessage();
+
+        try {
+            const response = await fetch('/ask', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({ text: message }),
+            });
+            const data = await response.json();
+            
+            if (data.source === "database") {
+                // Answer from the database
+                chatLog.removeChild(loadingMessage);
+                addMessage(data.answer);
+            } else if (data.source === "task") {
+                // Poll for the result from a background task
+                //const result = await pollForResult(data.task_id);
+                chatLog.removeChild(loadingMessage);
+                addMessage(data.task_id);
+            } else {
+                chatLog.removeChild(loadingMessage);
+                addMessage("Unknown source of data.");
+            }
+        } catch (error) {
+            chatLog.removeChild(loadingMessage);
+            const errorMessage = document.createElement('div');
+            errorMessage.classList.add('bot-message');
+            errorMessage.textContent = 'Sorry, an error occurred. Please try again.';
+            chatLog.appendChild(errorMessage);
+        }
+    }
+
+    async function pollForResult(taskId) {
+        while (true) {
+            const response = await fetch(`/result/${taskId}`);
+            const data = await response.json();
+            if (data.status === 'completed') {
+                return data.result;
+            } else if (data.status === 'error') {
+                throw new Error(data.message);
+            }
+            await new Promise(resolve => setTimeout(resolve, 1000));
+        }
+    }
+</script>
+</body>
+</html>
