@@ -98,28 +98,9 @@
     }
 
     
-    async function sendTextToServer(text) {
-       
-       
-       userMessageDiv.textContent = text;
-       chatLog.appendChild(userMessageDiv);
- 
-       
-    }
+    
         
-    async function performOCR(File) {
-        
-
-            
-                 
-                // Check for successful response
-                if () {
-                    const extractedText = ;
-                    return extractedText;
-                } else {
-                    return "error";
-                }
-    }
+    
         
     async function sendMessage() {
         const message = userInput.value.trim();
@@ -217,8 +198,6 @@
                     chatLog.removeChild(loadingMessage);
                     addMessage(data.answer);
                 } else if (data.source === "task") {
-                    // Poll for the result from a background task
-                    //const result = await pollForResult(data.task_id);
                     chatLog.removeChild(loadingMessage);
                     addMessage(data.task_id);
                 } else {
