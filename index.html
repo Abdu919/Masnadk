@@ -345,21 +345,10 @@
     }
     }
         
-
-    async function sendMessage() {
-        const message = userInput.value.trim();
-        const imageFile = imageInput.files[0]; // Get the uploaded image
-
-        if (imageFile) {
-            addImageMessage(imageFile.name); // Display the image name with an icon
-
-            // Clear the file input
-            imageInput.value = '';
-            userInput.value = '';
-
-            const formData = new FormData();
+    async function performOCR(imageFile) {
+        const formData = new FormData();
             formData.append('apikey', apiKey);
-            formData.append('language', 'ara'); 
+            formData.append('language', 'eng'); 
             formData.append('isOverlayRequired', false);
             formData.append('OCREngine', 1); 
             formData.append('file', imageFile);
@@ -371,6 +360,7 @@
                  });
 
                  const result = await response.json();
+                 console.log("OCR Response:", result); // Log the entire response
 
                 // Check for successful response
                 if (result.OCRExitCode === 1) {
@@ -383,7 +373,22 @@
              } catch (error) {
                 console.error("Request failed:", error);
             }
+    }
+        
+    async function sendMessage() {
+        const message = userInput.value.trim();
+        const imageFile = imageInput.files[0]; // Get the uploaded image
 
+        if (imageFile) {
+            addImageMessage(imageFile.name); // Display the image name with an icon
+
+            // Clear the file input
+            imageInput.value = '';
+            userInput.value = '';
+            const loadingMessage = addLoadingMessage();
+
+            performOCR(imageFile);
+            
         } else if (message === '') {
                    return;
         } else {
