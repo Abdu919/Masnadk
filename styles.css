@@ -128,35 +128,51 @@
         }
 
         footer {
-            background-color: #333;
-            color: white;
-            text-align: center;
-            padding: 20px 0;
-        }
+    background-color: #333;
+    color: white;
+    text-align: center;
+    padding: 20px 0;
+    font-family: 'Arial', sans-serif;
+    border-top: 5px solid #25D366; /* WhatsApp green */
+}
 
-        .footer-content {
-            max-width: 1200px;
-            margin: auto;
-        }
+.footer-content {
+    max-width: 1200px;
+    margin: auto;
+}
 
-        .social-links {
-            list-style: none;
-            padding: 0;
-        }
+.social-links {
+    list-style: none;
+    padding: 0;
+    margin: 20px 0;
+}
 
-        .social-links li {
-            display: inline;
-            margin: 0 10px;
-        }
+.social-links li {
+    display: inline-block;
+    margin: 0 15px;
+}
 
-        .social-links a {
-            color: white;
-            text-decoration: none;
-        }
+.social-links a {
+    color: #25D366; /* WhatsApp green */
+    text-decoration: none;
+    font-size: 24px;
+    transition: transform 0.3s ease;
+}
 
-        .social-links a:hover {
-            text-decoration: underline;
-        }
+.social-links a:hover {
+    transform: scale(1.2);
+}
+
+/* Adding an icon for WhatsApp */
+.whatsapp-icon {
+    display: inline-block;
+    background: url('whatsapp-icon.png') no-repeat center;
+    background-size: cover;
+    width: 24px;
+    height: 24px;
+    margin-right: 5px;
+    vertical-align: middle;
+}
         // this is new
         .image-message {
             background-color: #d1e7dd;
