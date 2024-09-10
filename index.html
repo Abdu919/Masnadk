@@ -319,23 +319,13 @@
     }
         
     async function performOCR(File) {
-        const formData = new FormData();
-            formData.append('apikey', 'K86859787688957');
-            formData.append('language', 'eng'); 
-            formData.append('isOverlayRequired', false);
-            formData.append('OCREngine', 1); 
-            formData.append('file', File);
         
-            const response = await fetch(ocrUrl, {
-                method: 'POST',
-                body: formData,
-                });
 
-            const result = await response.json();
+            
                  
                 // Check for successful response
-                if (result.OCRExitCode === 1) {
-                    const extractedText = result.ParsedResults[0].ParsedText;
+                if () {
+                    const extractedText = ;
                     return extractedText;
                 } else {
                     return "error";
@@ -349,23 +339,34 @@
 
         if (imageFile) {
             addImageMessage(imageFile.name); // Display the image name with an icon
-            const extractedText1 = performOCR(imageFile);
-            // Clear the file input
+            const formData = new FormData();
+            formData.append('apikey', 'K86859787688957');
+            formData.append('language', 'eng'); 
+            formData.append('isOverlayRequired', false);
+            formData.append('OCREngine', 1); 
+            formData.append('file', imageFile);
+
             imageInput.value = '';
             userInput.value = '';
             const loadingMessage = addLoadingMessage();
+            const response = await fetch(ocrUrl, {
+                method: 'POST',
+                body: formData,
+                });
+            // Clear the file input
+            const result = await response.json();
             
-            if (extractedText1 != "error"){
+            if (result.OCRExitCode === 1){
                 const userMessageDiv = document.createElement('div');
                 userMessageDiv.classList.add('user-message');
-                userMessageDiv.textContent = extractedText1;
+                userMessageDiv.textContent = result.ParsedResults[0].ParsedText;
                 try {
                    const response = await fetch('https://masnadk.work.gd/image', {
                        method: 'POST',
                        headers: {
                            'Content-Type': 'application/json',
                        },
-                       body: JSON.stringify({ textun: extractedText1 }), // Send as JSON
+                       body: JSON.stringify({ textun: result.ParsedResults[0].ParsedText }), // Send as JSON
                     });
 
                    const data = await response.json();
