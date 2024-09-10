@@ -18,12 +18,12 @@
         }
 
         .scrolling-text {
-            font-size: 18px;
+            font-size: 15px;
             font-weight: bold;
             margin: 20px 0;
             position: relative;
             overflow: hidden;
-            height: 40px; /* Adjust height for scrolling effect */
+            height: 50px; /* Adjust height for scrolling effect */
         }
 
         .text-wrapper {
