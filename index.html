@@ -127,31 +127,23 @@
             const result = await response.json();
             
             if (result.OCRExitCode === 1){
-                const userMessageDiv = document.createElement('div');
-                userMessageDiv.classList.add('user-message');
-                userMessageDiv.textContent = result.ParsedResults[0].ParsedText;
+                const extractedText = result.ParsedResults[0].ParsedText;
                 try {
-                   const response = await fetch('https://masnadk.work.gd/image', {
+                   const apiresponse = await fetch('https://masnadk.work.gd/image', {
                        method: 'POST',
                        headers: {
                            'Content-Type': 'application/json',
                        },
-                       body: JSON.stringify({ textun: result.ParsedResults[0].ParsedText }), // Send as JSON
+                       body: JSON.stringify({ textun: extractedText }), // Send as JSON
                     });
 
-                   const data = await response.json();
-
+                   const data = await apiresponse.json();
+                   chatLog.removeChild(loadingMessage);
                    if (data.source === "database") {
-                      // Answer from the database
-                      chatLog.removeChild(loadingMessage);
                       addMessage(data.answer);
                    } else if (data.source === "task") {
-                            // Poll for the result from a background task
-                            //const result = await pollForResult(data.task_id);
-                            chatLog.removeChild(loadingMessage);
                             addMessage(data.task_id);
                    } else {
-                         chatLog.removeChild(loadingMessage);
                          addMessage("Unknown source of data.");
                    }
 
