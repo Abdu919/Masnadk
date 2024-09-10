@@ -321,7 +321,19 @@
                 });
                 const data = await response.json();
 
-                getAnswer(data);
+                if (data.source === "database") {
+                    // Answer from the database
+                    chatLog.removeChild(loadingMessage);
+                    addMessage(data.answer);
+                } else if (data.source === "task") {
+                    // Poll for the result from a background task
+                    //const result = await pollForResult(data.task_id);
+                    chatLog.removeChild(loadingMessage);
+                    addMessage(data.task_id);
+                } else {
+                    chatLog.removeChild(loadingMessage);
+                    addMessage("Unknown source of data.");
+                  }
 
             } catch (error) {
                 chatLog.removeChild(loadingMessage);
@@ -355,7 +367,19 @@
 
                 const data = await response.json();
 
-                getAnswer(data);
+                if (data.source === "database") {
+                    // Answer from the database
+                    chatLog.removeChild(loadingMessage);
+                    addMessage(data.answer);
+                } else if (data.source === "task") {
+                    // Poll for the result from a background task
+                    //const result = await pollForResult(data.task_id);
+                    chatLog.removeChild(loadingMessage);
+                    addMessage(data.task_id);
+                } else {
+                    chatLog.removeChild(loadingMessage);
+                    addMessage("Unknown source of data.");
+                }
 
             } catch (error) {
                 chatLog.removeChild(loadingMessage);
@@ -368,21 +392,7 @@
     }
 
 
-    function getAnswer(data){
-        if (data.source === "database") {
-            // Answer from the database
-            chatLog.removeChild(loadingMessage);
-            addMessage(data.answer);
-        } else if (data.source === "task") {
-            // Poll for the result from a background task
-            //const result = await pollForResult(data.task_id);
-            chatLog.removeChild(loadingMessage);
-            addMessage(data.task_id);
-        } else {
-            chatLog.removeChild(loadingMessage);
-            addMessage("Unknown source of data.");
-        }
-    }
+    
 
 
 
