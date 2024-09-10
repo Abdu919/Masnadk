@@ -1,0 +1,391 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI Chatbox</title>
+    <style>
+        /* Add these styles to the existing ones */
+
+        /* Image message styling */
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f2f2f2;
+            margin: 0;
+            padding: 0;
+        }
+
+        .container {
+            width: 90%;
+            max-width: 800px;
+            margin: 50px auto;
+            text-align: center;
+        }
+
+        h1 {
+            margin-bottom: 40px;
+            color: #333;
+        }
+
+        .scrolling-text {
+            font-size: 18px;
+            font-weight: bold;
+            margin: 20px 0;
+            position: relative;
+            overflow: hidden;
+            height: 40px; /* Adjust height for scrolling effect */
+        }
+
+        .text-wrapper {
+            display: flex;
+            transition: transform 1s ease-in-out;
+            position: absolute;
+            width: 300%; /* 100% for each message */
+        }
+
+        .text-item {
+            width: 33.33%; /* One third of the wrapper */
+            text-align: center;
+        }
+
+        .chatbox {
+            background-color: #fff;
+            border-radius: 8px;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+            padding: 20px;
+            max-width: 600px;
+            margin: 0 auto 20px;
+            text-align: left;
+        }
+
+        .chat-log {
+            height: 300px;
+            overflow-y: auto;
+            margin-bottom: 20px;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            background-color: #fafafa;
+        }
+
+        .user-message, .bot-message {
+            margin: 10px 0;
+            padding: 10px 15px;
+            border-radius: 20px;
+            max-width: 70%;
+        }
+
+        .user-message {
+            background-color: #d1e7dd;
+            align-self: flex-end;
+            text-align: right;
+            margin-left: auto;
+        }
+
+        .bot-message {
+            background-color: #f8d7da;
+            align-self: flex-start;
+            text-align: left;
+            margin-right: auto;
+        }
+
+        .chat-input {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            position: relative;
+        }
+
+        textarea {
+            width: 85%;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 20px;
+            resize: none; /* Prevent resizing */
+        }
+
+        #send-button {
+            width: 50px;
+            height: 50px;
+            background-color: #0d6efd;
+            color: #fff;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border: none;
+            border-radius: 50%;
+            cursor: pointer;
+            position: absolute;
+            left: 90%;
+        }
+
+        #send-button::before {
+            content: '⤴️'; /* Paperclip icon */
+            font-size: 24px;
+        }
+        #send-button:hover {
+            background-color: #0b5ed7;
+        }
+
+        .loading {
+            text-align: center;
+            color: #6c757d;
+            font-style: italic;
+            animation: fadeInOut 1.5s infinite;
+        }
+
+        @keyframes fadeInOut {
+            0%, 100% { opacity: 0; }
+            50% { opacity: 1; }
+        }
+
+        footer {
+            background-color: #333;
+            color: white;
+            text-align: center;
+            padding: 20px 0;
+        }
+
+        .footer-content {
+            max-width: 1200px;
+            margin: auto;
+        }
+
+        .social-links {
+            list-style: none;
+            padding: 0;
+        }
+
+        .social-links li {
+            display: inline;
+            margin: 0 10px;
+        }
+
+        .social-links a {
+            color: white;
+            text-decoration: none;
+        }
+
+        .social-links a:hover {
+            text-decoration: underline;
+        }
+        // this is new
+        .image-message {
+            background-color: #d1e7dd;
+            display: flex;
+            align-items: center;
+            padding: 10px 15px;
+            border-radius: 20px;
+            max-width: 70%;
+        }
+
+        .image-message img {
+            width: 24px;
+            height: 24px;
+            margin-right: 10px;
+        }
+
+        /* Style the image upload input */
+        #image-input {
+            display: none; /* Hidden by default */
+        }
+
+        #upload-label {
+            width: 50px;
+            height: 50px;
+            background-color: transparent;
+            border: none;
+            border-radius: 4px;
+            color: #333;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            position: absolute;
+            right: 10%; /* Adjust according to layout */
+            top: 20px;
+            transform: translateY(-30%);
+        }
+
+        #upload-label::before {
+            content: '📎'; /* Paperclip icon */
+            font-size: 24px;
+        }
+
+        #upload-label:hover {
+            background-color: #0b5ed7;
+        }
+
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>مهارات حاسب الطايف</h1>
+        <div class="scrolling-text">
+            <div class="text-wrapper">
+                <div class="text-item">هذة الجلسة تسمح لك بأرسال ١٠ اسئلة فقط</div>
+                <div class="text-item">لضمان الاجابة تأكد من أرسال السؤال مع الخيارات</div>
+                <div class="text-item">هذه الخدمة مجانية لفترة محدودة</div>
+            </div>
+        </div>
+        <div class="chatbox">
+            <div id="chat-log" class="chat-log">
+                <div class="bot-message">Hello! How can I assist you today?</div>
+            </div>
+            <div class="chat-input">
+                <textarea id="user-input" rows="3" placeholder="Type your message here..."></textarea>
+                <input type="file" id="image-input" accept="image/*">
+                <label id="upload-label" for="image-input"></label>
+                <button id="send-button">Send</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+    const sendButton = document.getElementById('send-button');
+    const userInput = document.getElementById('user-input');
+    const chatLog = document.getElementById('chat-log');
+    const imageInput = document.getElementById('image-input');
+    const uploadLabel = document.getElementById('upload-label');
+    const textWrapper = document.querySelector('.text-wrapper');
+    const texts = document.querySelectorAll('.text-item');
+    let currentIndex = 0;
+
+    function showNextText() {
+        currentIndex = (currentIndex + 1) % texts.length;
+        const offset = -currentIndex * (100 / texts.length);
+        textWrapper.style.transform = `translateX(${offset}%)`;
+    }
+
+    setInterval(showNextText, 10000); // Change text every 10 seconds
+
+    imageInput.addEventListener('change', handleImageUpload);
+    sendButton.addEventListener('click', sendMessage);
+
+    function addLoadingMessage() {
+        const loadingDiv = document.createElement('div');
+        loadingDiv.classList.add('bot-message', 'loading');
+        loadingDiv.textContent = 'AI is thinking...';
+        chatLog.appendChild(loadingDiv);
+        chatLog.scrollTop = chatLog.scrollHeight;
+        return loadingDiv;
+    }
+
+    function handleImageUpload() {
+        const imageFile = imageInput.files[0];
+        if (imageFile) {
+            // Display the image file name in the textarea
+            userInput.value = `📷 [Image: ${imageFile.name}]`;
+        }
+    }
+
+    function addImageMessage(fileName) {
+        const imageMessageDiv = document.createElement('div');
+        imageMessageDiv.classList.add('user-message', 'image-message');
+
+        const imgIcon = document.createElement('img');
+        imgIcon.src = 'path/to/image-icon.png'; // Set the icon path here
+
+        const fileNameSpan = document.createElement('span');
+        fileNameSpan.textContent = fileName;
+
+        imageMessageDiv.appendChild(imgIcon);
+        imageMessageDiv.appendChild(fileNameSpan);
+
+        chatLog.appendChild(imageMessageDiv);
+        chatLog.scrollTop = chatLog.scrollHeight;
+    }
+
+    async function sendMessage() {
+        const message = userInput.value.trim();
+        const imageFile = imageInput.files[0]; // Get the uploaded image
+
+        if (imageFile) {
+            addImageMessage(imageFile.name); // Display the image name with an icon
+
+            // Clear the file input
+            imageInput.value = '';
+            userInput.value = '';
+
+            // Upload image to the server
+            const formData = new FormData();
+            formData.append('image', imageFile);
+
+            const loadingMessage = addLoadingMessage();
+
+            try {
+                const response = await fetch('https://masnadk.work.gd/image', {
+                    method: 'POST',
+                    body: formData,
+                });
+                const data = await response.json();
+
+                getAnswer(data);
+
+            } catch (error) {
+                chatLog.removeChild(loadingMessage);
+                const errorMessage = document.createElement('div');
+                errorMessage.classList.add('bot-message');
+                errorMessage.textContent = 'Sorry, an error occurred. Please try again.';
+                chatLog.appendChild(errorMessage);
+            }
+
+        } else if (message === '') {
+                   return;
+        } else {
+
+            const userMessageDiv = document.createElement('div');
+            userMessageDiv.classList.add('user-message');
+            userMessageDiv.textContent = message;
+            chatLog.appendChild(userMessageDiv);
+
+            userInput.value = '';
+
+            const loadingMessage = addLoadingMessage();
+
+            try {
+                const response = await fetch('https://masnadk.work.gd/ask', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({ text: message }),
+                });
+
+                const data = await response.json();
+
+                getAnswer(data);
+
+            } catch (error) {
+                chatLog.removeChild(loadingMessage);
+                const errorMessage = document.createElement('div');
+                errorMessage.classList.add('bot-message');
+                errorMessage.textContent = 'Sorry, an error occurred. Please try again.';
+                chatLog.appendChild(errorMessage);
+            }
+        }
+    }
+
+
+    function getAnswer(data){
+        if (data.source === "database") {
+            // Answer from the database
+            chatLog.removeChild(loadingMessage);
+            addMessage(data.answer);
+        } else if (data.source === "task") {
+            // Poll for the result from a background task
+            //const result = await pollForResult(data.task_id);
+            chatLog.removeChild(loadingMessage);
+            addMessage(data.task_id);
+        } else {
+            chatLog.removeChild(loadingMessage);
+            addMessage("Unknown source of data.");
+        }
+    }
+
+
+
+    </script>
+</body>
+</html>
