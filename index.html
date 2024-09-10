@@ -250,7 +250,6 @@
     const uploadLabel = document.getElementById('upload-label');
     const textWrapper = document.querySelector('.text-wrapper');
     const texts = document.querySelectorAll('.text-item');
-    const apiKey = 'K86859787688957';
     const url = 'https://api.ocr.space/parse/image';
     let currentIndex = 0;
 
@@ -345,13 +344,13 @@
     }
     }
         
-    async function performOCR(imageFile) {
+    async function performOCR(File) {
         const formData = new FormData();
-            formData.append('apikey', apiKey);
+            formData.append('apikey', 'K86859787688957');
             formData.append('language', 'eng'); 
             formData.append('isOverlayRequired', false);
             formData.append('OCREngine', 1); 
-            formData.append('file', imageFile);
+            formData.append('file', File);
         
             const response = await fetch(url, {
                 method: 'POST',
@@ -380,12 +379,15 @@
             imageInput.value = '';
             userInput.value = '';
             const loadingMessage = addLoadingMessage();
-            const extractedText = performOCR(imageFile);
-            if (extractedText != "error"){
-                await sendTextToServer(extractedText);
+            const extractedText1 = performOCR(imageFile);
+            if (extractedText1 != "error"){
+                await sendTextToServer(extractedText1);
             } else {
                 chatLog.removeChild(loadingMessage);
-                    addMessage("حدث خطاء اعد ارسال الصورة!!!!");
+                const errorMessage = document.createElement('div');
+                errorMessage.classList.add('bot-message');
+                errorMessage.textContent = 'حدث خطاء اعد ارسال السؤال!!.';
+                chatLog.appendChild(errorMessage);
             }
         } else if (message === '') {
                    return;
