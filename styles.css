@@ -23,7 +23,7 @@
             margin: 20px 0;
             position: relative;
             overflow: hidden;
-            height: 50px; /* Adjust height for scrolling effect */
+            height: 40px; /* Adjust height for scrolling effect */
         }
 
         .text-wrapper {
