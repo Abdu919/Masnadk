@@ -280,6 +280,16 @@
         }
     }
 
+
+    function addMessage(result) {
+        const botMessageDiv = document.createElement('div');
+        botMessageDiv.classList.add('bot-message');
+        botMessageDiv.textContent = result;
+        chatLog.appendChild(botMessageDiv);
+        chatLog.scrollTop = chatLog.scrollHeight;
+        return botMessageDiv;
+    }
+
     function addImageMessage(fileName) {
         const imageMessageDiv = document.createElement('div');
         imageMessageDiv.classList.add('user-message', 'image-message');
