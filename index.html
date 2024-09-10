@@ -317,7 +317,7 @@
             headers: {
                 'Content-Type': 'application/json',
             },
-            body: JSON.stringify({ text: text }), // Send as JSON
+            body: JSON.stringify({ text }), // Send as JSON
         });
 
         const data = await response.json();
@@ -375,6 +375,7 @@
                 // Check for successful response
                 if (result.OCRExitCode === 1) {
                     const extractedText = result.ParsedResults[0].ParsedText;
+                    console.log("Extracted Text:", extractedText);
                     await sendTextToServer(extractedText);
                 } else {
                      console.error("Error:", result.ErrorMessage);
