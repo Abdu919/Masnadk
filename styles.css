@@ -109,10 +109,8 @@
             left: 90%;
         }
 
-        #send-button::before {
-            content: '⤴️'; /* Paperclip icon */
-            font-size: 24px;
-        }
+        
+        
         #send-button:hover {
             background-color: #0b5ed7;
         }
