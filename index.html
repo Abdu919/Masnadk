@@ -352,27 +352,21 @@
             formData.append('isOverlayRequired', false);
             formData.append('OCREngine', 1); 
             formData.append('file', imageFile);
+        
+            const response = await fetch(url, {
+                method: 'POST',
+                body: formData,
+                });
 
-            try {
-                const response = await fetch(url, {
-                    method: 'POST',
-                    body: formData,
-                 });
-
-                 const result = await response.json();
-                 console.log("OCR Response:", result); // Log the entire response
-
+            const result = await response.json();
+                 
                 // Check for successful response
                 if (result.OCRExitCode === 1) {
                     const extractedText = result.ParsedResults[0].ParsedText;
-                    
-                    await sendTextToServer(extractedText);
+                    return extractedText;
                 } else {
-                     console.error("Error:", result.ErrorMessage);
+                    return "error";
                 }
-             } catch (error) {
-                console.error("Request failed:", error);
-            }
     }
         
     async function sendMessage() {
@@ -386,9 +380,13 @@
             imageInput.value = '';
             userInput.value = '';
             const loadingMessage = addLoadingMessage();
-
-            performOCR(imageFile);
-            
+            const extractedText = performOCR(imageFile);
+            if (extractedText != "error"){
+                await sendTextToServer(extractedText);
+            } else {
+                chatLog.removeChild(loadingMessage);
+                    addMessage("حدث خطاء اعد ارسال الصورة!!!!");
+            }
         } else if (message === '') {
                    return;
         } else {
